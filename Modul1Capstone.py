@@ -2,7 +2,7 @@
 
 data_pasien = [
     {
-        "ID_Pasien" : 1,
+        "ID_Pasien" : 1001,
         "nama": "Budiono Siregar",
         "umur": 22,
         "jenis_kelamin": "L",
@@ -10,12 +10,12 @@ data_pasien = [
         "no_hp": "081234567890",
         "diagnosa": "Tipes",
         "tanggal_masuk": "2025-08-05",
-        "kelas": "Kelas A",
+        "kelas": "Kelas II",
         "dokter": "Dr. Rini Yulianti",
         "status": "Rawat Inap"
     },
-        {
-        "ID_Pasien" : 2,
+    {
+        "ID_Pasien" : 1002,
         "nama": "Mimi Peri",
         "umur": 45,
         "jenis_kelamin": "P",
@@ -23,12 +23,12 @@ data_pasien = [
         "no_hp": "081234567890",
         "diagnosa": "Usus Buntu",
         "tanggal_masuk": "2025-08-05",
-        "kelas": "Kelas A",
+        "kelas": "Kelas 1",
         "dokter": "Dr. Anton Al Huda",
         "status": "Rawat Inap"
     },
-        {
-        "ID_Pasien" : 3,
+    {
+        "ID_Pasien" : 1003,
         "nama": "Udin Sedunia",
         "umur": 11,
         "jenis_kelamin": "L",
@@ -46,16 +46,26 @@ data_dokter = [
     "Dr. Rini Yulianti",
     "Dr. Anton Al Huda",
     "Dr. Siti Inshani",
-    "Dr. Mursyid Feriawan"
+    "Dr. Mursyid Feriawan",
     "Dr. Febri Istiqamah"
 ]
 
-# data_pasien_update = data_pasien.copy()
-# ID_Pasien = 0
+data_kelas_ranap = [
+    "VVIP",
+    "VIP",
+    "Kelas I",
+    "Kelas II",
+    "Kelas III"
+]
+
+data_status = [
+    "Rawat Inap",
+    "Rawat Jalan",
+    "Pulang"
+]
 
 # ---------------------------------------------------------- #
 ### Function 1 : READ
-### Untuk membaca data pasien yang ada di dalam data_pasien[]
 
 def tampilkan_data(pasien):
     print("\n----------------------------")
@@ -70,9 +80,9 @@ def tampilkan_data(pasien):
     print(f"Kelas         : {pasien['kelas']}")
     print(f"Dokter        : {pasien['dokter']}")
     print(f"Status        : {pasien['status']}")
-    print("\n----------------------------")
+    print("-----------------------------")
 
-# Lihat data semua pasien
+# Lihat Semua Pasien
 def lihat_semua():
     if not data_pasien:
         print('Data tidak ditemukan')
@@ -81,37 +91,67 @@ def lihat_semua():
         for pasien in data_pasien:
             tampilkan_data(pasien)
 
-# Lihat data pasien dengan nama
+# Lihat dari ID pasien
+def lihat_dari_id():
+    id_input = input('Masukkan ID pasien: ').strip()
+    if not id_input.isdigit():
+        print('ID harus berupa angka.')
+        return
+
+    cari_id = int(id_input)
+    for pasien in data_pasien:
+        if pasien['ID_Pasien'] == cari_id:
+            tampilkan_data(pasien)
+            return
+    print('Data yang anda cari tidak ditemukan.')
+
+# Lihat dari nama pasien
 def lihat_dari_nama():
     cari_nama = input('Masukkan nama pasien: ').lower()
     pasienData = False
     for pasien in data_pasien:
-            if cari_nama in pasien['nama'].lower():
-                tampilkan_data(pasien)
-                pasienData = True
-    if not pasienData:
-        print('Data yang anda cari tidak ditemukan.')
-
-# Lihat data pasien menggunakan kelas 
-def lihat_dari_kelas():
-    cari_nama = input('Masukkan nama kelas(ruangan) pasien:').lower()
-    pasienData = False
-    for pasien in data_pasien:
-        if cari_nama in pasien['kelas'].lower():
+        if cari_nama in pasien['nama'].lower():
             tampilkan_data(pasien)
             pasienData = True
     if not pasienData:
         print('Data yang anda cari tidak ditemukan.')
 
-# Lihat data pasien berdasarkan dokter
+# Lihat dari kelas / ruangan
+def lihat_dari_kelas():
+    if not data_kelas_ranap:
+        print("Daftar kelas/ruangan belum didefinisikan.")
+        return
+
+    print("\nDaftar Kelas/Ruangan yang tersedia:")
+    for i, k in enumerate(data_kelas_ranap, 1):
+        print(f"{i}. {k}")
+
+    while True:
+        pilihan = input(f"Pilih nomor kelas/ruangan (1-{len(data_kelas_ranap)}): ").strip()
+        if pilihan.isdigit():
+            indexRuangan = int(pilihan) - 1
+            if 0 <= indexRuangan < len(data_kelas_ranap):
+                kelas_dicari = data_kelas_ranap[indexRuangan]
+                break
+        print("Pilihan tidak valid. Silakan pilih nomor kelas/ruangan yang tersedia.")
+
+    ketemu = False
+    for pasien in data_pasien:
+        if pasien.get('kelas') == kelas_dicari:
+            tampilkan_data(pasien)
+            ketemu = True
+
+    if not ketemu:
+        print(f"Tidak ada pasien untuk kelas/ruangan {kelas_dicari}.")
+
+# Lihat dari dokter yang menangani
 def lihat_dari_dokter():
     print("\nDaftar dokter RS dr. HISYAM HAWARI:")
     for i, dokter in enumerate(data_dokter, 1):
         print(f"{i}. {dokter}")
 
-    # Validasi input dokter
     while True:
-        pilihan = input("Pilih nomor dokter yang ingin ditampilkan datanya: ")
+        pilihan = input("Pilih nomor dokter yang ingin ditampilkan datanya: ").strip()
         if pilihan.isdigit():
             indexDokter = int(pilihan) - 1
             if 0 <= indexDokter < len(data_dokter):
@@ -119,7 +159,6 @@ def lihat_dari_dokter():
                 break
         print("Pilihan tidak valid. Silakan pilih nomor dokter yang tersedia.")
 
-    # Tampilkan data pasien berdasarkan dokter yang dipilih
     ketemu = False
     for pasien in data_pasien:
         if pasien['dokter'] == dokter_dicari:
@@ -128,67 +167,114 @@ def lihat_dari_dokter():
     if not ketemu:
         print(f"Tidak ada pasien untuk {dokter_dicari}.")
 
-
 def menu_lihat_data_pasien():
     while True:
         print("\nMenu Lihat Data Pasien:")
         print("1. Melihat Seluruh Data Pasien")
-        print("2. Melihat Data Pasien Dengan Nama Pasien")
-        print("3. Menampilkan Data Pasien Berdasarkan Kelas/Ruangan")
-        print("4. Menampilkan Data Pasien Berdasarkan Dokter")
-        print("5. Kembali ke Main Menu")
-        pilihan = input("Pilih menu (1-5): ")
+        print("2. Melihat Data Pasien Berdasarkan ID")
+        print("3. Melihat Data Pasien Dengan Nama Pasien")
+        print("4. Menampilkan Data Pasien Berdasarkan Kelas/Ruangan")
+        print("5. Menampilkan Data Pasien Berdasarkan Dokter")
+        print("6. Kembali ke Main Menu")
+        pilihan = input("Pilih menu (1-6): ").strip()
         
         if pilihan == "1":
             lihat_semua()
         elif pilihan == "2":
-            lihat_dari_nama()
+            lihat_dari_id()
         elif pilihan == "3":
-            lihat_dari_kelas()
+            lihat_dari_nama()
         elif pilihan == "4":
-            lihat_dari_dokter()
+            lihat_dari_kelas()
         elif pilihan == "5":
+            lihat_dari_dokter()
+        elif pilihan == "6":
             break
         else:
             print("Pilihan tidak valid. Coba lagi.")
-    
-# menu_lihat_data_pasien()
-# ---------------------------------------------------------- #
-
 
 # ---------------------------------------------------------- #
 ### Function 2 : CREATE
-### Untuk membuat data pasien baru
+
 def tambah_pasien():
-    print("\n=== Tambah Data Pasien Baru ===")
-    id_pasien = len(data_pasien) + 1
+    print("\n===== Tambah Data Pasien Baru =====")
 
-    nama = input("Masukkan nama pasien: ")
-    
-    # Casting umur untuk diubah ke int
+    # 1) Daftar ID yang sudah ada
+    print("\nDaftar ID Pasien RS DR. HISYAM HAWARI:")
+    if data_pasien:
+        for dp in data_pasien:
+            print(f"- {dp['ID_Pasien']}: {dp['nama']}")
+    else:
+        print("(Belum ada data pasien)")
+
+    # 2) Input ID sesuai dengan angka terakhir (x) biar gampang menambahkan
     while True:
-        umur = input("Masukkan umur pasien: ")
-        if umur.isdigit():
-            umur = int(umur)
-            break
-        else:
-            print('Umur harus angka coba lagi.')
-    # ---------------------------------
+        id_input = input("Masukkan ID Pasien (100X): ").strip()
+        if not id_input.isdigit():
+            print("ID harus berupa angka. Coba lagi.")
+            continue
 
-    jenis_kelamin = input("Masukkan jenis kelamin pasien (L/P): ")
-    alamat = input("Masukkan alamat pasien: ")
-    no_hp = input("Masukkan no HP pasien: ")
-    diagnosa = input("Masukkan diagnosa pasien: ")
-    tanggal_masuk = input("Masukkan tanggal masuk (YYYY-MM-DD): ")
-    kelas = input("Masukkan ruangan/kelas pasien: ")
-    status = input("Masukkan status pasien (Rawat Inap/Jalan/Pulang): ")
-    
-    # Pilih dokter dari daftar
+        id_pasien = int(id_input)
+
+        id_duplicate = next((p for p in data_pasien if p["ID_Pasien"] == id_pasien), None)
+        if id_duplicate is not None:
+            print(f"ID {id_pasien} sudah digunakan oleh '{id_duplicate['nama']}'. Masukkan ID lain.")
+            continue
+        break
+
+    print(f"ID {id_pasien} bisa digunakan, Silahkan isi data pasien berikut:")
+
+    # 3) Input informasi pasien
+    nama = input("Masukkan nama pasien: ").strip()
+
+    while True:
+        umur_input = input("Masukkan umur pasien: ").strip()
+        if umur_input.isdigit():
+            umur = int(umur_input)
+            break
+        print("Umur harus angka. Coba lagi.")
+
+    while True:
+        jenis_kelamin = input("Masukkan jenis kelamin pasien (L/P): ").strip().upper()
+        if jenis_kelamin in ("L", "P"):
+            break
+        print("Input tidak valid. Gunakan L atau P.")
+
+    alamat = input("Masukkan alamat pasien: ").strip()
+    no_hp = input("Masukkan no HP pasien: ").strip()
+
+    # 4) Input Keterangan Kesehatan
+    diagnosa = input("Masukkan diagnosa pasien: ").strip()
+    tanggal_masuk = input("Masukkan tanggal masuk (YYYY-MM-DD): ").strip()
+
+    # 5) Input ruangan dan status
+    print("\nPilih Kelas/Ruangan:")
+    for i, k in enumerate(data_kelas_ranap, 1):
+        print(f"{i}. {k}")
+    while True:
+        k_in = input(f"Pilih nomor (1-{len(data_kelas_ranap)}): ").strip()
+        if k_in.isdigit() and 1 <= int(k_in) <= len(data_kelas_ranap):
+            kelas = data_kelas_ranap[int(k_in) - 1]
+            break
+        print("Pilihan tidak valid. Coba lagi.")
+
+
+    print("\nPilih Status:")
+    for i, s in enumerate(data_status, 1):
+        print(f"{i}. {s}")
+    while True:
+        s_in = input(f"Pilih nomor (1-{len(data_status)}): ").strip()
+        if s_in.isdigit() and 1 <= int(s_in) <= len(data_status):
+            status = data_status[int(s_in) - 1]
+            break
+        print("Pilihan tidak valid. Coba lagi.")
+
+
     print("\nDaftar dokter yang tersedia:")
     for i, dokter in enumerate(data_dokter, 1):
         print(f"{i}. {dokter}")
     while True:
-        pilihan_dokter = input(f"Pilih nomor dokter penanggung jawab (1-{len(data_dokter)}): ")
+        pilihan_dokter = input(f"Pilih nomor dokter penanggung jawab (1-{len(data_dokter)}): ").strip()
         if pilihan_dokter.isdigit():
             indexDokter = int(pilihan_dokter) - 1
             if 0 <= indexDokter < len(data_dokter):
@@ -211,16 +297,25 @@ def tambah_pasien():
     }
     data_pasien.append(pasien_baru)
     print("Data pasien berhasil ditambahkan!")
-# --------------------------------------------------- #
 
+def menu_tambah_pasien():
+    while True:
+        print("\nMenu Tambah Data Pasien:")
+        print("1. Tambah Pasien")
+        print("2. Kembali ke Main Menu")
+        pilihan = input("Pilih menu (1-2): ").strip()
+
+        if pilihan == "1":
+            tambah_pasien()
+        elif pilihan == "2":
+            break
+        else:
+            print("Pilihan tidak valid. Coba lagi.")
 
 # --------------------------------------------------- #
 # --- FUNCTION 3 : UPDATE
-# Function yang digunakan untuk mengubah data pasien ---
+
 def ubah_data_pasien():
-    if not data_pasien:
-        print("Belum ada data pasien untuk diubah.")
-        return
 
     def lihat_seluruh_data():
         if not data_pasien:
@@ -231,12 +326,11 @@ def ubah_data_pasien():
 
     lihat_seluruh_data()
     try:
-        id_target = int(input("Masukkan ID Pasien yang ingin diubah: "))
+        id_target = int(input("Masukkan ID Pasien yang ingin diubah: ").strip())
     except ValueError:
         print("Input tidak valid.")
         return
 
-    # Cari index pasien berdasarkan ID
     index = None
     for i, p in enumerate(data_pasien):
         if p["ID_Pasien"] == id_target:
@@ -249,97 +343,123 @@ def ubah_data_pasien():
 
     pasien = data_pasien[index]
 
-    # --- Submenu: Ubah Biodata ---
+    # ubah biodata
     def submenu_biodata():
         while True:
-            print("=== UBAH BIODATA PASIEN ===")
+            print("\n")
+            print("##### UBAH BIODATA PASIEN #####")
             print(f"1. Nama               [{pasien['nama']}]")
             print(f"2. Umur               [{pasien['umur']}]")
             print(f"3. Jenis Kelamin (L/P)[{pasien['jenis_kelamin']}]")
             print(f"4. Alamat             [{pasien['alamat']}]")
             print(f"5. No HP              [{pasien['no_hp']}]")
-            print("6. Batal/Kembali")  # angka terakhir untuk batal
+            print("6. Batal/Kembali")
+            print("\n")
             pilih = input("Pilih data biodata yang ingin diubah (1-6): ").strip()
 
             if pilih == "1":
-                pasien['nama'] = input(f"Nama baru [{pasien['nama']}]: ") or pasien['nama']
-                print("✔ Nama diperbarui.")
+                pasien['nama'] = input(f"Nama baru [{pasien['nama']}]: ").strip() or pasien['nama']
+                print("Nama pasien telah diperbarui.")
             elif pilih == "2":
-                baru = input(f"Umur baru [{pasien['umur']}]: ")
-                pasien['umur'] = baru if baru != "" else pasien['umur']
-                print("✔ Umur diperbarui.")
+                baru = input(f"Umur baru [{pasien['umur']}]: ").strip()
+                if baru == "":
+                    print("Umur tidak diubah.")
+                elif baru.isdigit():
+                    pasien['umur'] = int(baru)
+                    print("Umur telah diperbarui.")
+                else:
+                    print("Umur harus menggunakan angka. Perubahan dibatalkan.")
             elif pilih == "3":
-                baru = input(f"Jenis Kelamin baru (L/P) [{pasien['jenis_kelamin']}]: ").upper()
+                baru = input(f"Jenis Kelamin baru (L/P) [{pasien['jenis_kelamin']}]: ").strip().upper()
                 if baru in ("L", "P", ""):
                     pasien['jenis_kelamin'] = baru if baru != "" else pasien['jenis_kelamin']
-                    print("✔ Jenis kelamin diperbarui.")
+                    print("Jenis kelamin pasien telah diperbarui.")
                 else:
                     print("Input tidak valid (gunakan L atau P).")
             elif pilih == "4":
-                pasien['alamat'] = input(f"Alamat baru [{pasien['alamat']}]: ") or pasien['alamat']
-                print("✔ Alamat diperbarui.")
+                pasien['alamat'] = input(f"Alamat baru [{pasien['alamat']}]: ").strip() or pasien['alamat']
+                print("Alamat pasien telah diperbarui.")
             elif pilih == "5":
-                pasien['no_hp'] = input(f"No HP baru [{pasien['no_hp']}]: ") or pasien['no_hp']
-                print("✔ No HP diperbarui.")
+                pasien['no_hp'] = input(f"No HP baru [{pasien['no_hp']}]: ").strip() or pasien['no_hp']
+                print("No HP pasien telah diperbarui.")
             elif pilih == "6":
                 print("Kembali ke menu utama UPDATE.")
                 break
             else:
                 print("Pilihan tidak valid.")
 
-    # --- Submenu: Ubah Keterangan Perawatan ---
+    # ubah keterangan perawatan
     def submenu_perawatan():
         while True:
-            print("=== UBAH KETERANGAN PERAWATAN ===")
+            print('-----------------------------')
+            print(f"Pilih data yang ingin diubah dari pasien {pasien['nama']} (ID: {pasien['ID_Pasien']})")
+            print("##### UBAH KETERANGAN PERAWATAN #####")
             print(f"1. Diagnosa           [{pasien['diagnosa']}]")
             print(f"2. Tanggal Masuk      [{pasien['tanggal_masuk']}]")
             print(f"3. Kelas/Ruangan      [{pasien['kelas']}]")
             print(f"4. Dokter             [{pasien['dokter']}]")
             print(f"5. Status             [{pasien['status']}]")
-            print("6. Batal/Kembali")  # angka terakhir untuk batal
+            print("6. Batal/Kembali")
             pilih = input("Pilih data perawatan yang ingin diubah (1-6): ").strip()
 
             if pilih == "1":
-                pasien['diagnosa'] = input(f"Diagnosa baru [{pasien['diagnosa']}]: ") or pasien['diagnosa']
-                print("✔ Diagnosa diperbarui.")
+                pasien['diagnosa'] = input(f"Diagnosa baru [{pasien['diagnosa']}]: ").strip() or pasien['diagnosa']
+                print("Diagnosa pasien telah diperbarui.")
             elif pilih == "2":
-                pasien['tanggal_masuk'] = input(f"Tanggal Masuk baru (YYYY-MM-DD) [{pasien['tanggal_masuk']}]: ") or pasien['tanggal_masuk']
-                print("✔ Tanggal masuk diperbarui.")
+                pasien['tanggal_masuk'] = input(f"Tanggal Masuk baru (YYYY-MM-DD) [{pasien['tanggal_masuk']}]: ").strip() or pasien['tanggal_masuk']
+                print("Tanggal masuk pasien telah diperbarui.")
             elif pilih == "3":
-                pasien['kelas'] = input(f"Kelas/Ruangan baru [{pasien['kelas']}]: ") or pasien['kelas']
-                print("✔ Kelas/Ruangan diperbarui.")
+                print("\nPilih Kelas/Ruangan:")
+                for i, k in enumerate(data_kelas_ranap, 1):
+                    print(f"{i}. {k}")
+                inp = input(f"Pilih nomor kelas (1-{len(data_kelas_ranap)}) atau isikan kosong untuk batal: ").strip()
+                if inp == "":
+                    pass
+                elif inp.isdigit() and 1 <= int(inp) <= len(data_kelas_ranap):
+                    pasien['kelas'] = data_kelas_ranap[int(inp) - 1]
+                    print("Kelas/Ruangan pasien telah diperbarui.")
+                else:
+                    print("Pilihan tidak valid.")
             elif pilih == "4":
                 print("Daftar dokter yang tersedia:")
                 for i, d in enumerate(data_dokter, 1):
                     print(f"{i}. {d}")
-                pilihan_dokter = input(f"Pilih nomor dokter (1-{len(data_dokter)}) atau enter untuk batal: ").strip()
+                pilihan_dokter = input(f"Pilih nomor dokter (1-{len(data_dokter)}) atau isikan kosong untuk batal: ").strip()
                 if pilihan_dokter.isdigit():
-                    idx = int(pilihan_dokter) - 1
-                    if 0 <= idx < len(data_dokter):
-                        pasien['dokter'] = data_dokter[idx]
-                        print("✔ Dokter diperbarui.")
+                    indexDokter = int(pilihan_dokter) - 1
+                    if 0 <= indexDokter < len(data_dokter):
+                        pasien['dokter'] = data_dokter[indexDokter]
+                        print("Dokter yang di assign telah diperbarui.")
                     else:
                         print("Nomor dokter tidak valid.")
                 elif pilihan_dokter == "":
-                    pass  # batal
+                    pass
                 else:
                     print("Input tidak valid.")
             elif pilih == "5":
-                baru = input(f"Status baru (Rawat Inap/Jalan/Pulang) [{pasien['status']}]: ")
-                pasien['status'] = baru if baru != "" else pasien['status']
-                print("✔ Status diperbarui.")
+                print("\nPilih Status:")
+                for i, s in enumerate(data_status, 1):
+                    print(f"{i}. {s}")
+                inp = input(f"Pilih nomor status (1-{len(data_status)}) atau isikan kosong untuk batal: ").strip()
+                if inp == "":
+                    pass
+                elif inp.isdigit() and 1 <= int(inp) <= len(data_status):
+                    pasien['status'] = data_status[int(inp) - 1]
+                    print("Status pasien telah diperbarui.")
+                else:
+                    print("Pilihan tidak valid.")
             elif pilih == "6":
                 print("Kembali ke menu utama UPDATE.")
                 break
             else:
                 print("Pilihan tidak valid.")
 
-    # --- Menu Utama UPDATE: klasifikasi biodata vs perawatan ---
     while True:
-        print("=== MENU UPDATE PASIEN (ID: {}) ===".format(pasien['ID_Pasien']))
+        print('-----------------------------')
+        print("Pilih data yang ingin diubah dari pasien {nama} (ID: {id})".format(nama=pasien['nama'], id=pasien['ID_Pasien']))
         print("1. Ubah Biodata Pasien   (Nama, Umur, JK, Alamat, No HP)")
         print("2. Ubah Keterangan Perawatan (Diagnosa, Tanggal Masuk, Kelas, Dokter dan Status)")
-        print("3. Batal/Kembali")  # angka terakhir untuk batal
+        print("3. Batal/Kembali")
         pm = input("Pilih menu (1-3): ").strip()
         if pm == "1":
             submenu_biodata()
@@ -350,63 +470,102 @@ def ubah_data_pasien():
             break
         else:
             print("Pilihan tidak valid.")
-# --------------------------------------------------- #
 
+def menu_ubah_data_pasien():
+    while True:
+        print("\nMenu Ubah Data Pasien:")
+        print("1. Ubah Data")
+        print("2. Kembali ke Main Menu")
+        pilihan = input("Pilih menu (1-2): ").strip()
+
+        if pilihan == "1":
+            ubah_data_pasien()
+        elif pilihan == "2":
+            break
+        else:
+            print("Pilihan tidak valid. Coba lagi.")
 
 # --------------------------------------------------- #
 # --- FUNCTION : DELETE
-# Function yang digunakan untuk hapus Data Pasien ---
+
 def hapus_data_pasien():
     if not data_pasien:
         print("Belum ada data pasien untuk dihapus.")
         return
-    lihat_semua()
-    try:
-        nomor = int(input("Masukkan ID Pasien yang ingin dihapus: "))
-        index = None
-        for i, pasien in enumerate(data_pasien):
-            if pasien["ID_Pasien"] == nomor:
-                index = i
-                break
-        if index is None:
-            print("ID Pasien tidak ditemukan.")
-            return
-        del data_pasien[index]
-        print("Data pasien berhasil dihapus!")
-    except ValueError:
-        print("Input tidak valid.")
-# --------------------------------------------------- #
 
+    lihat_semua()
+
+    id_input = input("Masukkan ID Pasien yang ingin dihapus: ").strip()
+    if not id_input.isdigit():
+        print("Input tidak valid.")
+        return
+    nomor = int(id_input)
+
+    target = next((p for p in data_pasien if p["ID_Pasien"] == nomor), None)
+    if target is None:
+        print("ID Pasien tidak ditemukan.")
+        return
+
+    while True:
+        konfirmasi = input(
+            f"Yakin ingin menghapus pasien {target['nama']} (ID: {target['ID_Pasien']})? (y/n): "
+        ).strip().lower()
+        if konfirmasi in ("y", "n"):
+            break
+        print("Input tidak valid. Ketik 'y' untuk ya atau 'n' untuk tidak.")
+
+    if konfirmasi == "n":
+        print("Dibatalkan. Data tidak dihapus.")
+        return
+
+    data_pasien.remove(target)
+    print("Data pasien berhasil dihapus!")
+
+def menu_hapus_data_pasien():
+    while True:
+        print("\nMenu Hapus Data Pasien:")
+        print("1. Hapus Data Pasien")
+        print("2. Kembali ke Main Menu")
+        pilihan = input("Pilih menu (1-2): ").strip()
+
+        if pilihan == "1":
+            hapus_data_pasien() 
+        elif pilihan == "2":
+            break
+        else:
+            print("Pilihan tidak valid. Coba lagi.")
 
 # --------------------------------------------------- #
 ## Function : MENU
+
 def main_menu():
     while True: 
         print("\n============= SELAMAT DATANG ==============")
-        print("\n=== SISTEM CRUD DATA PASIEN RUMAH SAKIT ===")
-        print("\n======= RUMAH SAKIT DR HISYAM HAWARI =======")
+        print("\n### SISTEM CRUD DATA PASIEN RUMAH SAKIT ###")
+        print("\n====== RUMAH SAKIT DR. HISYAM HAWARI ======")
+        print("\n")
         print("1. Lihat Data Pasien")
         print("2. Tambah Data Pasien")
         print("3. Ubah Data Pasien")
         print("4. Hapus Data Pasien")
         print("5. Keluar")
-        pilihan = input("Pilih menu (1-5): ")
+        pilihan = input("Silahkan pilih menu (1-5) sesuai kebutuhan: ").strip()
 
         if pilihan == "1":
             menu_lihat_data_pasien()
         elif pilihan == "2":
-            tambah_pasien()
+            menu_tambah_pasien()
         elif pilihan == "3":
-            ubah_data_pasien()
+            menu_ubah_data_pasien()
         elif pilihan == "4":
-            hapus_data_pasien()
+            menu_hapus_data_pasien()
         elif pilihan == "5":
             print("Terima kasih, program selesai.")
             break
         else:
             print("Pilihan tidak valid. Silakan ulangi.")
 
-# --- Jalankan Program ---
+# Main Menu
 if __name__ == "__main__":
     main_menu()
-# ------------------------------------------------------ # 
+# ------------------------------------------------------ #
